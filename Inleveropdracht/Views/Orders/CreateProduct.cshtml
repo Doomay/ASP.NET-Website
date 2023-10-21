@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Product creatie";
+}
+
+@model Inleveropdracht.Models.OrderItemViewModel
+
+<h2>Maak een nieuw product</h2>
+
+<form asp-action="CreateProduct" method="post">
+    <div class="form-group">
+        <label asp-for="ProductName">De naam van het product</label>
+        <input asp-for="ProductName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ProductDescription">De beschrijving van het product</label>
+        <input asp-for="ProductDescription" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ProductImage">Product Afbeelding</label>
+        <input asp-for="ProductImage" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price">De prijs van het product</label>
+        <input asp-for="Price" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-2">Voeg toe</button>
+
+</form>
+
+<a href="PlaceOrder" type="submit" class="btn btn-primary mb-2">Terug</> </a>

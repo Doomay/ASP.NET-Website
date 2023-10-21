@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Klanten";
+}
+
+@model List<Customer>
+
+<h2>Klanten</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Admin</th>
+            <th>Naam</th>
+            <th>Email</th>
+            <th>Telefoonnummer</th>
+            <th>Adres</th>
+            <th>ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td>
+                    <button class="btn @(customer.IsAdminClass ? "btn-success" : "btn-danger") toggle-admin-button"
+                            data-customer-id="@customer.CustomerId" data-is-admin="@customer.IsAdminClass">
+                        @if (customer.IsAdminClass)
+                        {
+                            <span class="admin-text">Admin</span>
+                        }
+                        else
+                        {
+                            <span class="admin-text">Not Admin</span>
+                        }
+                    </button>
+                </td>
+                <td>@customer.CustomerName</td>
+                <td>@customer.Email</td>
+                <td>@customer.PhoneNumber</td>
+                <td>@customer.Address</td>
+                <td>@customer.CustomerId</td>
+                <td>
+                    <a href="#" class="btn btn-primary edit-button">Verander</a>
+                    @await Html.PartialAsync("_DeleteButtonC", (Inleveropdracht.Models.Customer)customer)
+                    <div class="edit-form" style="display: none">
+                        @await Html.PartialAsync("_EditCustomer", (Inleveropdracht.Models.Customer)customer)
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mb-2">
+    <form method="post" asp-controller="Customer" asp-action="Registratie">
+        <button type="submit" class="btn btn-primary btn-block">Nieuw Account</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(".edit-button").click(function () {
+        var editForm = $(this).siblings(".edit-form");
+        editForm.toggle();
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(".toggle-admin-button").click(function () {
+            var button = $(this);
+            var customerId = button.data("customer-id");
+            var isAdmin = button.data("is-admin");
+
+            // Toggle the isAdmin value
+            isAdmin = !isAdmin;
+
+            // Send an AJAX request to update the IsAdminClass property on the server
+            $.ajax({
+                url: "/Customer/UpdateAdminStatus", // Adjust the URL as needed
+                method: "POST",
+                data: {
+                    customerId: customerId,
+                    isAdmin: isAdmin
+                },
+                success: function (data) {
+                    if (data.success) {
+                        // Update the button text based on the new isAdmin value
+                        button.data("is-admin", isAdmin);
+                        if (isAdmin) {
+                            button.removeClass("btn-danger").addClass("btn-success");
+                            button.find(".admin-text").text("Admin");
+                        } else {
+                            button.removeClass("btn-success").addClass("btn-danger");
+                            button.find(".admin-text").text("Not Admin");
+                        }           
+                    } else {
+                        // Handle errors if necessary
+                        console.error("Error: " + data.error);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: " + errorThrown);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+

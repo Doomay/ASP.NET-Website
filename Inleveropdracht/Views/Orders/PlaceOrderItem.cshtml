@@ -1,0 +1,48 @@
+﻿@model List<Order>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h2>Orders</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Order Date</th>
+            <th>Customer ID</th>
+            <th>Products</th>
+            <th>Actions</th> <!-- Add a new column for actions -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Where(o => !o.IsFinished))
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.OrderDate</td>
+                <td>@order.CustomerId</td>
+                <td>
+                    <ul>
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <li>@item.Product.ProductName - Hoeveelheid: @item.Quantity</li>
+                        }
+
+
+                        @if (!order.OrderItems.Any())
+                        {
+                            <li>No products associated with this order</li>
+                        }
+
+                    </ul>
+                </td>
+                <td>
+                    @await Html.PartialAsync("_DeleteButtonOrder", order)
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

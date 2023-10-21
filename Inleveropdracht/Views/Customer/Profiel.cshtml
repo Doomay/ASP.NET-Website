@@ -1,0 +1,61 @@
+﻿@model Customer
+
+<h2>Profiel</h2>
+<div class="profile-container">
+    <table class="table table-striped">
+        <tr>
+            <th>Naam</th>
+            <td>@Model.CustomerName</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>@Model.Email</td>
+        </tr>
+        <tr>
+            <th>Telefoonnummer</th>
+            <td>@Model.PhoneNumber</td>
+        </tr>
+        <tr>
+            <th>Adres</th>
+            <td>@Model.Address</td>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <td>@Model.CustomerId</td>
+        </tr>
+    </table>
+</div>
+<h3>Bestellingen</h3>
+<table class="table table-striped">
+    <tr>
+        <th>Order ID</th>
+        <th>Order Date</th>
+        <th>Finished At</th>
+        <th>Customer ID</th>
+        <th>Order Items</th>
+    </tr>
+    @foreach (var order in Model.Orders)
+    {
+        @if (order.IsFinished)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.OrderDate</td>
+                <td>@order.FinishedAt</td>
+                <td>@order.CustomerId</td>
+                <td>
+                    <ul>
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <li>@item.Product.ProductName - Hoeveelheid: @item.Quantity</li>
+                        }
+                        @if (!order.OrderItems.Any())
+                        {
+                            <li>No products associated with this order</li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        }
+    }
+</table>

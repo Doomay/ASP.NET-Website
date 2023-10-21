@@ -1,0 +1,21 @@
+﻿@model OrderItemViewModel
+
+<form asp-action="EditProduct" asp-route-id="@Model.ProductId" method="post">
+    <div class="form-group">
+        <label for="ProductName">Product Naam</label>
+        <input type="text" class="form-control" id="ProductName" name="ProductName" value="@Model.ProductName">
+    </div>
+    <div class="form-group">
+        <label for="ProductDescription">Product Beschrijving</label>
+        <textarea class="form-control" id="ProductDescription" name="ProductDescription">@Model.ProductDescription</textarea>
+    </div>
+    <div class="form-group">
+        <label for="ProductImage">Product Afbeelding</label>
+        <input type="text" class="form-control" id="ProductImage" name="ProductImage" value="@Model.ProductImage">
+    </div>
+    <div class="form-group">
+        <label for="Price">Prijs</label>
+        <input type="text" class="form-control" id="Price" name="Price" value="@Model.Price">
+    </div>
+    <button type="submit" class="btn btn-primary">Sla op</button>
+</form>

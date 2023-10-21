@@ -1,0 +1,166 @@
+﻿@{
+    ViewData["Title"] = "Order plaatsen";
+}
+
+@model List<OrderItemViewModel>
+
+<style>
+    .products-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .product {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        width: 50%; /* Initially, each product takes half of the container width */
+    }
+
+        .product:nth-child(odd) {
+            justify-content: flex-start; /* Left alignment for odd-indexed products */
+        }
+
+        .product:nth-child(even) {
+            justify-content: flex-end; /* Right alignment for even-indexed products */
+        }
+
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .product-details {
+        margin-left: 20px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Plaats een bestelling</h2>
+            <div class="products-container">
+                @foreach (var product in Model)
+                {
+                    <div class="product">
+                        <img src="@product.ProductImage" alt="@product.ProductName" class="product-image" />
+                        <div class="product-details">
+                            <h3>@product.ProductName</h3>
+                            <p>Prijs: @string.Format("{0:C2}", product.Price)</p>
+                            <button class="add-to-cart" data-product-id="@product.ProductId" data-product-name="@product.ProductName" data-product-price="@product.Price">Voeg toe aan winkelwagen</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cart-popup" class="hidden-popup">
+    <div id="cart">
+        <h2>Winkelwagen</h2>
+        <ul id="cart-items">
+        </ul>
+        <div id="total-amount">Totaal: €0,00</div>
+    </div>
+</div>
+
+<form id="place-order-form" method="post" asp-controller="Orders" asp-action="PlaceOrderItem">
+    <input type="hidden" id="selected-items" name="selectedItems" value="" />
+    <button type="button" class="btn btn-success btn-block" id="place-order-button" disabled>Plaats order</button>
+</form>
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const customerId = getCookie("CustomerId");
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            const cartItems = document.getElementById('cart-items');
+            const cartPopup = document.getElementById('cart-popup');
+            const totalAmount = document.getElementById('total-amount');
+            const placeOrderButton = document.getElementById('place-order-button');
+            const selectedItemsInput = document.getElementById('selected-items');
+
+            let cartTotal = 0;
+            let selectedItems = [];
+
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = button.getAttribute('data-product-id');
+                    const productName = button.getAttribute('data-product-name');
+                    const productPrice = parseFloat(button.getAttribute('data-product-price').replace(',', '.'));
+
+                    const cartItem = document.createElement('li');
+                    cartItem.textContent = productName;
+
+                    const removeButton = document.createElement('button');
+                    removeButton.className = 'remove-item';
+                    removeButton.textContent = 'X';
+                    removeButton.style.fontSize = '12px';
+                    removeButton.style.background = 'none';
+                    removeButton.style.border = 'none';
+                    removeButton.style.cursor = 'pointer';
+                    removeButton.style.color = 'red';
+
+                    removeButton.addEventListener('click', function () {
+                        cartItems.removeChild(cartItem);
+                        cartTotal -= productPrice;
+                        totalAmount.textContent = `Totaal: €${cartTotal.toFixed(2)}`;
+
+                        // Remove the item from the selected items list
+                        const index = selectedItems.indexOf(productId);
+                        if (index > -1) {
+                            selectedItems.splice(index, 1);
+                        }
+
+                        // Update the selected items input value
+                        selectedItemsInput.value = selectedItems.join(',');
+
+                        // Disable the "Plaats order" button if no items are selected
+                        if (selectedItems.length === 0) {
+                            placeOrderButton.disabled = true;
+                        }
+                    });
+
+                    cartItem.appendChild(removeButton);
+                    cartItems.appendChild(cartItem);
+
+                    cartTotal += productPrice;
+                    totalAmount.textContent = `Totaal: €${cartTotal.toFixed(2)}`;
+
+                    // Add the item to the selected items list
+                    selectedItems.push(productId);
+                    selectedItemsInput.value = selectedItems.join(',');
+
+                    // Enable the "Plaats order" button if at least one item is selected
+                    placeOrderButton.disabled = false
+
+                    // Show the cart pop-up
+                    cartPopup.classList.remove('hidden-popup');
+                });
+            });
+                // Add a click event handler for the "Plaats order" button
+                placeOrderButton.addEventListener('click', function () {
+                    const selectedItems = selectedItemsInput.value;
+
+                    // Use the customerId obtained from the cookie
+                    const url = `/Orders/Orders?selectedItems=${selectedItems}&customerId=${customerId}`;
+
+                    window.location.href = url;
+                });
+
+                // The getCookie function remains the same as in the previous response
+                function getCookie(name) {
+                    const cookieArray = document.cookie.split('; ');
+                    for (const cookie of cookieArray) {
+                        const [cookieName, cookieValue] = cookie.split('=');
+                        if (cookieName === name) {
+                            return cookieValue;
+                        }
+                    }
+                    return null; // Return null if the cookie is not found
+                }
+            });
+        </script>
+    }

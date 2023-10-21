@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Bestelgegevens";
+}
+
+@model OrderViewModel
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Bestelgegevens</h2>
+            <p>Klant-ID: @Model.CustomerId</p>
+            <p>Geselecteerde Producten:</p>
+            <ul>
+                @foreach (var product in Model.Products)
+                {
+                    var quantity = Model.IdCounts.ContainsKey(product.ProductId) ? Model.IdCounts[product.ProductId] : 0;
+                    var totalPriceForProduct = product.Price * quantity;
+                    <li>
+                        @product.ProductName @($"{quantity}x") - €@totalPriceForProduct
+                    </li>
+                }
+            </ul>
+            <p>Totaalprijs: €@Model.TotalPrice</p>
+
+            <form method="post" id="orderForm">
+                <input type="hidden" name="klantId" value="@Model.CustomerId" />
+                <input type="hidden" name="geselecteerdeItems" value="@string.Join(",", Model.Products.Select(p => p.ProductId))" />
+                <button type="button" id="bevestigBestellingButton" class="btn btn-primary">Bevestig Bestelling</button>
+            </form>
+
+
+            <div style="margin-top: 20px;">
+            <button class="btn btn-secondary" onclick="goBack()">Terug</button>
+        </div>
+    </div>
+</div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#bevestigBestellingButton").click(function () {
+                $.ajax({
+                    url: "@Url.Action("BevestigBestelling", "Orders")",
+                    method: "POST",
+                    data: $("#orderForm").serialize(),
+                    success: function (result) {
+                        if (result.success) {
+                            $("#bevestigBestellingButton").html('<i class="fas fa-check"></i> Bestelling Bevestigd');
+                            $("#bevestigBestellingButton").addClass("btn-success");
+                            $("#bevestigBestellingButton").prop("disabled", true);
+                        } else {
+                            alert("Order confirmation failed.");
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while confirming the order.");
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>

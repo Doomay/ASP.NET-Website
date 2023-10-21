@@ -1,0 +1,36 @@
+﻿@model Customer
+
+<h2>Maak een nieuwe klant</h2>
+
+<form asp-action="CreateCustomer" method="post">
+
+    <div class="form-group">
+        <label asp-for="CustomerName">De naam van de klant</label>
+        <input asp-for="CustomerName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email">De email van de klant</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PhoneNumber">Het telefoonnummer van de klant</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address">Het adres van de klant</label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CustomerPassword">Het wachtwoord van de klant</label>
+        <input asp-for="CustomerPassword" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-2">Voeg toe</button>
+
+</form>
+
+<a href="Customer" type="submit" class="btn btn-primary mb-2">Terug</> </a>

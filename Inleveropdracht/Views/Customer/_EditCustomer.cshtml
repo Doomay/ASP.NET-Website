@@ -1,0 +1,21 @@
+﻿@model Customer
+
+<form asp-action="EditCustomer" asp-route-id="@Model.CustomerId" method="post">
+    <div class="form-group">
+        <label for="CustomerName">Naam</label>
+        <input type="text" class="form-control" id="CustomerName" name="CustomerName" value="@Model.CustomerName">
+    </div>
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <textarea class="form-control" id="Email" name="Email">@Model.Email</textarea>
+    </div>
+    <div class="form-group">
+        <label for="PhoneNumber">Telefoonnummer</label>
+        <input type="number" class="form-control" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber">
+    </div>
+    <div class="form-group">
+        <label for="Address">Adres</label>
+        <input type="text" class="form-control" id="Address" name="Address" value="@Model.Address">
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>

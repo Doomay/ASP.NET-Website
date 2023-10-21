@@ -1,0 +1,7 @@
+﻿@model Order
+
+<form method="post" asp-action="CompleteOrder" asp-route-OrderId="@Model.OrderId" onsubmit="return confirm('Are you sure you want to complete this order?')">
+    <button type="submit" class="btn btn-success">
+        Mark as Complete
+    </button>
+</form>

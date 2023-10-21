@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Order plaatsen";
+}
+
+@model List<OrderItemViewModel>
+
+<h2>Plaats een bestelling</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Beschrijving</th>
+            <th>Prijs</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.ProductName</td>
+                <td>@product.ProductDescription</td>
+                <td>
+                    @if (product.DiscountAmount > 0)
+                    {
+                        <del>@string.Format("{0:C2}", product.Price)</del>
+                        <br />
+                        @string.Format("{0:C2}", product.Price - product.DiscountAmount)
+                    }
+                    else
+                    {
+                        @string.Format("{0:C2}", product.Price)
+                    }
+                </td>
+                <td>
+                </td>
+                <td>
+                    <a href="#" class="btn btn-primary edit-button">Verander</a>
+                    @await Html.PartialAsync("_DeleteButton", product)
+                    <div class="edit-form" style="display: none">
+                        @await Html.PartialAsync("_EditProduct", product)
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr>
+        </tr>
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="mb-2">
+        <form method="post" asp-controller="Orders" asp-action="CreateProduct">
+            <button type="submit" class="btn btn-primary btn-block">Voeg product toe</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(".edit-button").click(function () {
+        var editForm = $(this).siblings(".edit-form");
+        editForm.toggle();
+    });
+</script>

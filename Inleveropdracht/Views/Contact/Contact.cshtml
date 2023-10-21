@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Contactpagina";
+}
+    
+<body>
+    <header>
+        <h1>Contacteer Ons</h1>
+    </header>
+    <div class="container">
+        <p>Welkom bij De Gouden Friteuse! Heeft u vragen, opmerkingen of gewoon zin in een smakelijk gesprek over friet? Neem gerust contact met ons op. We staan klaar om u te helpen.</p>
+
+        <h2>Onze Locatie</h2>
+        <p><strong>De Gouden Friteuse</strong></p>
+        <p>Adres: Patatstraat 123, Vetstad</p>
+        <img src="https://dontai.com/wp/wp-content/uploads/2018/04/glendale-la-cali-google-2018-4-17.png" alt="Locatiekaart" width="150" height="100">
+
+
+        <h2>Contactgegevens</h2>
+        <ul>
+            <li><strong>Telefoon:</strong> 0123-456789</li>
+            <li><strong>E-mail:</strong> <a href="mailto:info@degoudenfriteuse.nl">info@degoudenfriteuse.nl</a></li>
+            <li><strong>Fax:</strong> 0123-987654</li>
+        </ul>
+
+        <h2>Openingstijden</h2>
+        <p>Maandag tot vrijdag: 11:00 - 21:00 uur</p>
+        <p>Zaterdag en zondag: 12:00 - 20:00 uur</p>
+
+        <h2>Stuur ons een bericht</h2>
+        <p>Vragen? Opmerkingen? Laat het ons weten door het onderstaande formulier in te vullen. We streven ernaar om binnen 24 uur te reageren.</p>
+
+        <form action="mailto:info@degoudenfriteuse.nl" method="post" enctype="text/plain">
+            <label for="naam">Naam:</label>
+            <input type="text" id="naam" name="naam" required><br>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="bericht">Bericht:</label><br>
+            <textarea id="bericht" name="bericht" rows="4" required></textarea><br>
+
+            <input type="submit" value="Verstuur">
+        </form>
+    </div>
+</body>
+</html>
