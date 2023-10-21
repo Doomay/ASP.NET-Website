@@ -98,19 +98,14 @@ namespace Inleveropdracht.Controllers
 
                     if (user != null)
                     {
-                        // Fetch the customer's orders, including finished ones
+                        // Fetch the customer and their orders, including finished ones
                         user.Orders = _context.Orders
                             .Include(o => o.OrderItems)
                             .ThenInclude(oi => oi.Product)
                             .Where(o => o.CustomerId == customerId)
                             .ToList();
 
-                        // Calculate points based on the number of orders and items
-                        int totalPoints = user.Orders.Count * 10;
-
-                        user.Points = totalPoints;
-
-                        // Pass the user's information, including their points, to the view
+                        // Pass the user's information, including their orders, to the view
                         return View(user);
                     }
                 }
@@ -120,7 +115,6 @@ namespace Inleveropdracht.Controllers
             // For example, you can redirect them to the login page or display an error message.
             return RedirectToAction("Login");
         }
-
 
 
 
