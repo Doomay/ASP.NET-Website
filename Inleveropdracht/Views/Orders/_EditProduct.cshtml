@@ -17,5 +17,16 @@
         <label for="Price">Prijs</label>
         <input type="text" class="form-control" id="Price" name="Price" value="@Model.Price">
     </div>
+    <div class="form-group">
+    <label for="SalePercentage">Sale Percentage</label>
+    <select class="form-control" id="SalePercentage" name="SalePercentage">
+        <option value="0">No Sale</option>
+        <option value="10">10% off</option>
+        <option value="20">20% off</option>
+        <option value="30">30% off</option>
+        <!-- Add more options as needed -->
+    </select>
+</div>
+
     <button type="submit" class="btn btn-primary">Sla op</button>
 </form>

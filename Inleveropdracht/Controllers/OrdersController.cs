@@ -137,6 +137,7 @@ namespace Inleveropdracht.Controllers
                 ProductImage = product.ProductImage,
                 ProductName = product.ProductName,
                 Price = product.Price,
+                SalePercentage = product.SalePercentage,
             });
 
             // Return the view with the correct model type
@@ -152,6 +153,7 @@ namespace Inleveropdracht.Controllers
                 ProductDescription = product.ProductDescription,
                 ProductName = product.ProductName,
                 Price = product.Price,
+                SalePercentage = product.SalePercentage,
             });
 
             // Return the view with the correct model type
@@ -240,7 +242,7 @@ namespace Inleveropdracht.Controllers
                 ProductDescription = product.ProductDescription,
                 ProductImage = product.ProductImage,
                 Price = product.Price,
-                DiscountAmount = product.DiscountAmount,
+                SalePercentage = product.SalePercentage
             };
 
             return View(orderItem);
@@ -264,8 +266,8 @@ namespace Inleveropdracht.Controllers
                 product.ProductName = orderItem.ProductName;
                 product.ProductDescription = orderItem.ProductDescription;
                 product.Price = orderItem.Price;
-                product.DiscountAmount = orderItem.DiscountAmount;
                 product.ProductImage = orderItem.ProductImage;
+                product.SalePercentage = orderItem.SalePercentage;
 
                 _context.SaveChanges();
 

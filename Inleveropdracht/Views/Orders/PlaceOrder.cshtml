@@ -14,15 +14,15 @@
         display: flex;
         align-items: center;
         margin-bottom: 10px;
-        width: 50%; /* Initially, each product takes half of the container width */
+        width: 50%;
     }
 
         .product:nth-child(odd) {
-            justify-content: flex-start; /* Left alignment for odd-indexed products */
+            justify-content: flex-start;
         }
 
         .product:nth-child(even) {
-            justify-content: flex-end; /* Right alignment for even-indexed products */
+            justify-content: flex-end;
         }
 
     .product-image {
@@ -33,6 +33,27 @@
     .product-details {
         margin-left: 20px;
     }
+
+    .sale-indicator {
+        color: #FF0000;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .original-price-strikethrough {
+        text-decoration: line-through;
+        color: #FF0000;
+    }
+
+    .discounted-price {
+        color: #4CAF50;
+        font-weight: bold;
+    }
+
+    .regular-price {
+        color: #333;
+    }
+
 </style>
 
 <div class="container">
@@ -46,7 +67,16 @@
                         <img src="@product.ProductImage" alt="@product.ProductName" class="product-image" />
                         <div class="product-details">
                             <h3>@product.ProductName</h3>
-                            <p>Prijs: @string.Format("{0:C2}", product.Price)</p>
+                            @if (product.SalePercentage > 0)
+                            {
+                                <p class="sale-indicator">Sale: @product.SalePercentage% off</p>
+                                <p class="original-price-strikethrough">Normale prijs: <del>@string.Format("{0:C2}", product.Price)</del></p>
+                                <p class="discounted-price">Nieuwe prijs: @string.Format("{0:C2}", product.Price - (product.Price * product.SalePercentage / 100))</p>
+                            }
+                            else
+                            {
+                                <p class="regular-price">Prijs: @string.Format("{0:C2}", product.Price)</p>
+                            }
                             <button class="add-to-cart" data-product-id="@product.ProductId" data-product-name="@product.ProductName" data-product-price="@product.Price">Voeg toe aan winkelwagen</button>
                         </div>
                     </div>
@@ -90,6 +120,12 @@
                     const productId = button.getAttribute('data-product-id');
                     const productName = button.getAttribute('data-product-name');
                     const productPrice = parseFloat(button.getAttribute('data-product-price').replace(',', '.'));
+
+                    // If the product has a sale percentage, calculate the discounted price
+                    if (button.getAttribute('data-sale-percentage') > 0) {
+                        const salePercentage = parseFloat(button.getAttribute('data-sale-percentage'));
+                        productPrice -= (productPrice * (salePercentage / 100));
+                    }
 
                     const cartItem = document.createElement('li');
                     cartItem.textContent = productName;
@@ -140,27 +176,28 @@
                     cartPopup.classList.remove('hidden-popup');
                 });
             });
-                // Add a click event handler for the "Plaats order" button
-                placeOrderButton.addEventListener('click', function () {
-                    const selectedItems = selectedItemsInput.value;
 
-                    // Use the customerId obtained from the cookie
-                    const url = `/Orders/Orders?selectedItems=${selectedItems}&customerId=${customerId}`;
+            // Add a click event handler for the "Plaats order" button
+            placeOrderButton.addEventListener('click', function () {
+                const selectedItems = selectedItemsInput.value;
 
-                    window.location.href = url;
-                });
+                // Use the customerId obtained from the cookie
+                const url = `/Orders/Orders?selectedItems=${selectedItems}&customerId=${customerId}`;
 
-                // The getCookie function remains the same as in the previous response
-                function getCookie(name) {
-                    const cookieArray = document.cookie.split('; ');
-                    for (const cookie of cookieArray) {
-                        const [cookieName, cookieValue] = cookie.split('=');
-                        if (cookieName === name) {
-                            return cookieValue;
-                        }
-                    }
-                    return null; // Return null if the cookie is not found
-                }
+                window.location.href = url;
             });
-        </script>
-    }
+
+            // The getCookie function remains the same as in the previous response
+            function getCookie(name) {
+                const cookieArray = document.cookie.split('; ');
+                for (const cookie of cookieArray) {
+                    const [cookieName, cookieValue] = cookie.split('=');
+                    if (cookieName === name) {
+                        return cookieValue;
+                    }
+                }
+                return null; // Return null if the cookie is not found
+            }
+        });
+    </script>
+}

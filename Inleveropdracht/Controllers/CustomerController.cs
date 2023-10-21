@@ -56,7 +56,7 @@ namespace Inleveropdracht.Controllers
 
                 ViewBag.IsAdmin = isAdmin;
 
-                return RedirectToAction("Customer");
+                return RedirectToAction("Profiel");
             }
             else
             {
@@ -86,40 +86,40 @@ namespace Inleveropdracht.Controllers
             // If the customerId is not found in the cookie or there is an error, return an appropriate response
             return Json(new { isAdmin = false });
         }
-        public IActionResult Profiel()
+public IActionResult Profiel()
+{
+    // Check if the "CustomerId" cookie exists
+    if (Request.Cookies.TryGetValue("CustomerId", out var customerIdCookie))
+    {
+        if (int.TryParse(customerIdCookie, out int customerId))
         {
-            // Check if the "CustomerId" cookie exists
-            if (Request.Cookies.TryGetValue("CustomerId", out var customerIdCookie))
+            // Use the customerId to query the database for the user's information
+            var user = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
+
+            if (user != null)
             {
-                if (int.TryParse(customerIdCookie, out int customerId))
-                {
-                    // Use the customerId to query the database for the user's information
-                    var user = _context.Customers.FirstOrDefault(c => c.CustomerId == customerId);
+                // Fetch the customer's orders, including finished ones
+                user.Orders = _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .Where(o => o.CustomerId == customerId)
+                    .ToList();
 
-                    if (user != null)
-                    {
-                        // Fetch the customer's orders, including finished ones
-                        user.Orders = _context.Orders
-                            .Include(o => o.OrderItems)
-                            .ThenInclude(oi => oi.Product)
-                            .Where(o => o.CustomerId == customerId)
-                            .ToList();
+                // Calculate points based on the number of orders and items
+                int totalPoints = user.Orders.Count * 10; // You can adjust the points calculation as needed
 
-                        // Calculate points based on the number of orders and items
-                        int totalPoints = user.Orders.Count * 10; // You can adjust the points calculation as needed
+                user.Points = totalPoints;
 
-                        user.Points = totalPoints;
-
-                        // Pass the user's information, including their points, to the view
-                        return View(user);
-                    }
-                }
+                // Pass the user's information, including their points, to the view
+                return View(user);
             }
-
-            // Handle the case when the user is not authenticated or their information is not found
-            // For example, you can redirect them to the login page or display an error message.
-            return RedirectToAction("Login");
         }
+    }
+
+    // Handle the case when the user is not authenticated or their information is not found
+    // For example, you can redirect them to the login page or display an error message.
+    return RedirectToAction("Login");
+}
 
 
 

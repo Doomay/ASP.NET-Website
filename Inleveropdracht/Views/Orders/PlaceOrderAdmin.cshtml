@@ -21,18 +21,14 @@
                 <td>@product.ProductName</td>
                 <td>@product.ProductDescription</td>
                 <td>
-                    @if (product.DiscountAmount > 0)
+                    @if (product.SalePercentage > 0)
                     {
-                        <del>@string.Format("{0:C2}", product.Price)</del>
-                        <br />
-                        @string.Format("{0:C2}", product.Price - product.DiscountAmount)
+                        @string.Format("{0:C2}", product.Price - (product.Price * (product.SalePercentage / 100)))
                     }
                     else
                     {
                         @string.Format("{0:C2}", product.Price)
                     }
-                </td>
-                <td>
                 </td>
                 <td>
                     <a href="#" class="btn btn-primary edit-button">Verander</a>
@@ -43,6 +39,7 @@
                 </td>
             </tr>
         }
+
         <tr>
         </tr>
     </tbody>
