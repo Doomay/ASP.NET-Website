@@ -14,12 +14,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); // Configure the connection string
 });
 
+// Add SwaggerGen services here before calling builder.Build()
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseStaticFiles();
