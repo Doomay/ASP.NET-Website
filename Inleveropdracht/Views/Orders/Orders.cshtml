@@ -16,7 +16,7 @@
                 @foreach (var product in Model.Products)
                 {
                     var quantity = Model.IdCounts.ContainsKey(product.ProductId) ? Model.IdCounts[product.ProductId] : 0;
-                    var totalPriceForProduct = product.Price * quantity;
+                    var totalPriceForProduct = CalculateTotalPrice(product, quantity);
                     <li>
                         @product.ProductName @($"{quantity}x") - €@totalPriceForProduct
                     </li>
@@ -30,41 +30,54 @@
                 <button type="button" id="bevestigBestellingButton" class="btn btn-primary">Bevestig Bestelling</button>
             </form>
 
-
             <div style="margin-top: 20px;">
-            <button class="btn btn-secondary" onclick="goBack()">Terug</button>
+                <button class="btn btn-secondary" onclick="goBack()">Terug</button>
+            </div>
         </div>
     </div>
 </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#bevestigBestellingButton").click(function () {
-                $.ajax({
-                    url: "@Url.Action("BevestigBestelling", "Orders")",
-                    method: "POST",
-                    data: $("#orderForm").serialize(),
-                    success: function (result) {
-                        if (result.success) {
-                            $("#bevestigBestellingButton").html('<i class="fas fa-check"></i> Bestelling Bevestigd');
-                            $("#bevestigBestellingButton").addClass("btn-success");
-                            $("#bevestigBestellingButton").prop("disabled", true);
-                        } else {
-                            alert("Order confirmation failed.");
-                        }
-                    },
-                    error: function () {
-                        alert("An error occurred while confirming the order.");
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#bevestigBestellingButton").click(function () {
+            $.ajax({
+                url: "@Url.Action("BevestigBestelling", "Orders")",
+                method: "POST",
+                data: $("#orderForm").serialize(),
+                success: function (result) {
+                    if (result.success) {
+                        var orderId = result.orderId;
+                        $("#bevestigBestellingButton").html('<i class="fas fa-check"></i> Bestelling Bevestigd - Het nummer voor je order: ' + orderId);
+                        $("#bevestigBestellingButton").addClass("btn-success");
+                        $("#bevestigBestellingButton").prop("disabled", true);
+                    } else {
+                        alert("Order confirmation failed.");
                     }
-                });
+                },
+                error: function () {
+                    alert("An error occurred while confirming the order.");
+                }
             });
         });
-    </script>
+    });
+</script>
 
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
 
-    <script>
-        function goBack() {
-            window.history.back();
+@functions {
+    // Helper function to calculate the total price, considering the sale percentage
+    decimal CalculateTotalPrice(Product product, int quantity)
+    {
+        if (product.SalePercentage > 0)
+        {
+            decimal discountedPrice = product.Price - (product.Price * (product.SalePercentage / 100));
+            return discountedPrice * quantity;
         }
-    </script>
+        return product.Price * quantity;
+    }
+}

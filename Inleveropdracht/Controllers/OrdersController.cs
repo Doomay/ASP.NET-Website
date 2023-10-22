@@ -19,7 +19,7 @@ namespace Inleveropdracht.Controllers
         {
             if (customerId <= 0)
             {
-                return View("Error");
+                return RedirectToAction("Login");
             }
 
             List<int> selectedItemIds = selectedItems.Split(',').Select(int.Parse).ToList();
@@ -66,22 +66,21 @@ namespace Inleveropdracht.Controllers
         [HttpPost]
         public IActionResult BevestigBestelling(int klantId, string geselecteerdeItems)
         {
-            // Split the selected product IDs
-            List<int> selectedProductIds = geselecteerdeItems.Split(',').Select(int.Parse).ToList();
+            List<int> selectedItemIds = geselecteerdeItems.Split(',').Select(int.Parse).ToList();
 
-            // Create a dictionary to count the occurrences of each product ID
-            Dictionary<int, int> productCounts = new Dictionary<int, int>();
+            // Create a dictionary to store the counts of each ID
+            Dictionary<int, int> idCounts = new Dictionary<int, int>();
 
-            // Count the occurrences of each product ID
-            foreach (var productId in selectedProductIds)
+            // Count the occurrences of each ID in the selected items
+            foreach (int id in selectedItemIds)
             {
-                if (productCounts.ContainsKey(productId))
+                if (idCounts.ContainsKey(id))
                 {
-                    productCounts[productId]++;
+                    idCounts[id]++;
                 }
                 else
                 {
-                    productCounts[productId] = 1;
+                    idCounts[id] = 1;
                 }
             }
 
@@ -93,12 +92,12 @@ namespace Inleveropdracht.Controllers
             };
 
             // Create OrderItems based on the selected product IDs and their counts
-            foreach (var productId in productCounts.Keys)
+            foreach (var productId in idCounts.Keys)
             {
                 var orderItem = new OrderItem
                 {
                     ProductId = productId,
-                    Quantity = productCounts[productId]
+                    Quantity = idCounts[productId]
                 };
 
                 order.OrderItems.Add(orderItem);
@@ -108,7 +107,9 @@ namespace Inleveropdracht.Controllers
             _context.Orders.Add(order);
             _context.SaveChanges();
 
-            var result = new { success = true };
+            var orderId = order.OrderId; // Get the OrderID after it's saved
+
+            var result = new { success = true, OrderId = orderId };
             return Json(result);
         }
 
